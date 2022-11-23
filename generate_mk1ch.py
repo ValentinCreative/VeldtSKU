@@ -1,0 +1,94 @@
+import pandas as pd
+import gspread as gs
+from credentials import credentials
+from data import database, sources
+from utils import concat_sku, concat_description
+
+
+def generate_mk1ch():
+
+    gc = gs.service_account_from_dict(credentials)
+
+    products = []
+
+    # Transforme chaque fichiers en donnée exploitable
+    data = {}
+
+    for key in sources:
+        print("Récupération du fichier ", key)
+        sh = gc.open_by_url(sources[key])
+        ws = sh.get_worksheet(0)
+        data[key] = pd.DataFrame(ws.get_all_records())
+
+    # Boucler sur tous les designs
+    for design_index, design in data['designs'].iterrows():
+        percent_done = round((design_index + 1) / len(data['designs']) * 100)
+        print("Progression ", percent_done, "%")
+        # Boucler sur toutes les finitions
+        for finish_index, finish in data['helmet_finishes'].iterrows():
+            price_eur = 0
+            price_usd = 0
+            price_rmb = 0
+            # Si le design correspond à la finition
+            if design['HelmetFinishes'] == finish['HelmetFinish']:
+
+                # Boucler sur touts les prix / finitions
+                for finish_price_index, finish_price in data[
+                        'finish_and_design_prices'].iterrows():
+
+                    if finish_price['Parameter2'] == 'CH' and finish_price[
+                            'Parameter1'] == finish['HelmetFinishSKU']:
+                        price_eur += float(finish_price['M1PriceEUR'])
+                        price_usd += float(finish_price['M1PriceUSD'])
+                        price_rmb += float(finish_price['M1PriceRMB'])
+                    if finish_price['Parameter1'] == 'CH' and finish_price[
+                            'Parameter2'] == design['Mark1PriceCategory']:
+                        price_eur += float(finish_price['M1PriceEUR'])
+                        price_usd += float(finish_price['M1PriceUSD'])
+                        price_rmb += float(finish_price['M1PriceRMB'])
+                # Boucler sur touts les items
+                for item_index, item in data['helmet_items'].iterrows():
+                    if item['FamilySKU'] == 'M1':
+                        if item['ItemSKU'] == 'CH':
+                            product = {
+                                'Product_Code':
+                                concat_sku([
+                                    item['SKU'],
+                                    design['DesignSKU'],
+                                    finish['HelmetFinishSKU'],
+                                ]),
+                                'Description_EN':
+                                concat_description([
+                                    item['Family'],
+                                    item['Helmet_Configuration_or_accesori'],
+                                    design['DesignDescription'],
+                                    finish['HelmetFinishDescription'],
+                                ]),
+                                'EUR':
+                                float(item['EUR']) + price_eur,
+                                'USD':
+                                float(item['USD']) + price_usd,
+                                'RMB':
+                                float(item['RMB']) + price_rmb,
+                                'description_FRlong':
+                                concat_description([
+                                    item['Description_FR'],
+                                    design['Description_FR'],
+                                ]),
+                                'design':
+                                design['DesignDescription'],
+                                'FamilySKU':
+                                item['SKU'],
+                                'Finition':
+                                finish['HelmetFinishSKU'],
+                            }
+                            products.append(product)
+
+    data_frame = pd.DataFrame(products)
+    sheet = gc.open_by_url(database)
+    worksheet = sheet.worksheet('MK1CH')
+    worksheet.clear()
+
+    worksheet.update([data_frame.columns.values.tolist()] +
+                     data_frame.values.tolist())
+    print("Fini ! ", database)
