@@ -1,8 +1,7 @@
 import pandas as pd
 import gspread as gs
 from credentials import credentials
-from data import database, sources
-from utils import concat_sku, concat_description
+from data import database
 
 
 def generate_mk1kits():
@@ -53,6 +52,34 @@ def generate_mk1kits():
                 'COMPONENT': 'M1SS-CL',
             }
             products.append(fullface4)
+
+        if product['FamilySKU'] == 'M1EN':
+            fullface = {
+                'SKU':
+                product['Product_Code'],
+                'QTY':
+                1,
+                'COMPONENT':
+                product['Product_Code'][:2] + 'SI' +
+                product['Product_Code'][4:],
+            }
+            products.append(fullface)
+            fullface2 = {
+                'SKU':
+                product['Product_Code'],
+                'QTY':
+                1,
+                'COMPONENT':
+                product['Product_Code'][:2] + 'CH' +
+                product['Product_Code'][4:][:5],
+            }
+            products.append(fullface2)
+            fullface3 = {
+                'SKU': product['Product_Code'],
+                'QTY': 1,
+                'COMPONENT': 'M1PK-BM',
+            }
+            products.append(fullface3)
 
     data_frame = pd.DataFrame(products)
     sheet = gc.open_by_url(database)
