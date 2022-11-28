@@ -80,6 +80,29 @@ def generate_mk1kits():
                 'COMPONENT': 'M1PK-BM',
             }
             products.append(fullface3)
+        if product['FamilySKU'] == 'M1JE':
+            fullface = {
+                'SKU':
+                product['Product_Code'],
+                'QTY':
+                1,
+                'COMPONENT':
+                product['Product_Code'][:2] + 'SI' +
+                product['Product_Code'][4:],
+            }
+            products.append(fullface)
+            fullface2 = {
+                'SKU': product['Product_Code'],
+                'QTY': 1,
+                'COMPONENT': 'M1FS',
+            }
+            products.append(fullface2)
+            fullface3 = {
+                'SKU': product['Product_Code'],
+                'QTY': 1,
+                'COMPONENT': 'M1SL-CL',
+            }
+            products.append(fullface3)
 
     data_frame = pd.DataFrame(products)
     sheet = gc.open_by_url(database)
