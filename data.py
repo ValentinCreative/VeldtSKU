@@ -15,4 +15,6 @@ sources = {
     'https://docs.google.com/spreadsheets/d/1HTxz5ypJ-agnC0BzZ1gX6HrW0Xvthn3oFcb1GWV0Oj4/edit#gid=390737500',
     'mark1_sizes':
     'https://docs.google.com/spreadsheets/d/1_B9rce0wINDHBE3QGV0An0NUnJVCBwcz1Ddn6jyk4po/edit#gid=1621514264',
+    'mark2_sizes':
+    'https://docs.google.com/spreadsheets/d/1H4WHis3M0r7gbQXRkhOrx1L2s_uNgYi42SsFOR-ZFvo/edit#gid=1621514264',
 }
