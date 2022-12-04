@@ -148,6 +148,15 @@ def generate_mk1():
                                                 design['Collection'],
                                                 'Size':
                                                 size['Sizes'],
+                                                'OldSKU':
+                                                concat_sku([
+                                                    design['OldSKU'],
+                                                    item['OldSKU'],
+                                                    finish['HelmetFinishSKU'],
+                                                    size['Sizes'],
+                                                    certification[
+                                                        'Mark1Certifications'],
+                                                ]),
                                             }
                                             products.append(product)
 
