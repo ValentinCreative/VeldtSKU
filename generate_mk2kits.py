@@ -4,13 +4,14 @@ from credentials import credentials
 from data import database
 
 
-def generate_mk1kits():
+def generate_mk2kits():
+
   gc = gs.service_account_from_dict(credentials)
 
   products = []
 
   sh = gc.open_by_url(database)
-  ws = sh.worksheet('MK1')
+  ws = sh.worksheet('MK2')
   data = pd.DataFrame(ws.get_all_records())
 
   # Boucler sur tous les casques
@@ -18,15 +19,14 @@ def generate_mk1kits():
     percent_done = round((index + 1) / len(data) * 100)
     print("Progression ", percent_done, "%")
 
-    if product['FamilySKU'] == 'M1FF':
+    if product['FamilySKU'] == 'M2FF':
       fullface = {
         'SKU':
         product['Product_Code'],
         'QTY':
         1,
         'COMPONENT':
-        product['Product_Code'][:2] + 'SI' +
-        product['Product_Code'][4:],
+        product['Product_Code'][:2] + 'SI' + product['Product_Code'][4:],
       }
       products.append(fullface)
       fullface2 = {
@@ -35,77 +35,67 @@ def generate_mk1kits():
         'QTY':
         1,
         'COMPONENT':
-        product['Product_Code'][:2] + 'CH' +
-        product['Product_Code'][4:][:5],
+        product['Product_Code'][:2] + 'CH' + product['Product_Code'][4:][:5],
       }
       products.append(fullface2)
       fullface3 = {
         'SKU': product['Product_Code'],
         'QTY': 1,
-        'COMPONENT': 'M1FS',
+        'COMPONENT': 'M1F',
       }
       products.append(fullface3)
       fullface4 = {
         'SKU': product['Product_Code'],
         'QTY': 1,
-        'COMPONENT': 'M1SS-CL',
+        'COMPONENT': 'M2SS-SM',
       }
       products.append(fullface4)
 
-    if product['FamilySKU'] == 'M1EN':
+    if product['FamilySKU'] == 'M2EN':
       fullface = {
         'SKU':
         product['Product_Code'],
         'QTY':
         1,
         'COMPONENT':
-        product['Product_Code'][:2] + 'SI' +
-        product['Product_Code'][4:],
+        product['Product_Code'][:2] + 'SI' + product['Product_Code'][4:],
       }
       products.append(fullface)
-      fullface2 = {
+      fullface3 = {
         'SKU':
         product['Product_Code'],
         'QTY':
         1,
         'COMPONENT':
-        product['Product_Code'][:2] + 'CH' +
-        product['Product_Code'][4:][:5],
-      }
-      products.append(fullface2)
-      fullface3 = {
-        'SKU': product['Product_Code'],
-        'QTY': 1,
-        'COMPONENT': 'M1PK-BM',
+        product['Product_Code'][:2] + 'CH' + product['Product_Code'][4:][:5],
       }
       products.append(fullface3)
-    if product['FamilySKU'] == 'M1JE':
+    if product['FamilySKU'] == 'M2JE':
       fullface = {
         'SKU':
         product['Product_Code'],
         'QTY':
         1,
         'COMPONENT':
-        product['Product_Code'][:2] + 'SI' +
-        product['Product_Code'][4:],
+        product['Product_Code'][:2] + 'SI' + product['Product_Code'][4:],
       }
       products.append(fullface)
       fullface2 = {
         'SKU': product['Product_Code'],
         'QTY': 1,
-        'COMPONENT': 'M1FS',
+        'COMPONENT': 'M1F',
       }
       products.append(fullface2)
       fullface3 = {
         'SKU': product['Product_Code'],
         'QTY': 1,
-        'COMPONENT': 'M1SL-CL',
+        'COMPONENT': 'M2SS-SM',
       }
       products.append(fullface3)
 
   data_frame = pd.DataFrame(products)
   sheet = gc.open_by_url(database)
-  worksheet = sheet.worksheet('MK1KITS')
+  worksheet = sheet.worksheet('MK2KITS')
   worksheet.clear()
 
   worksheet.update([data_frame.columns.values.tolist()] +
