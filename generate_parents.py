@@ -80,9 +80,6 @@ def generate_parents():
                     design['Collection'],
                   }
                   products.append(product)
-                  return products
-
-  products = generate_parents()
 
   data_frame = pd.DataFrame(products)
   sheet = gc.open_by_url(database)
