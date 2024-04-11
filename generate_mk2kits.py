@@ -1,18 +1,11 @@
 import pandas as pd
-import gspread as gs
-from credentials import credentials
-from data import database
+from data import database, get_data, gc
 
 
 def generate_mk2kits():
-
-    gc = gs.service_account_from_dict(credentials)
-
     products = []
 
-    sh = gc.open_by_url(database)
-    ws = sh.worksheet('MK2')
-    data = pd.DataFrame(ws.get_all_records())
+    data = get_data('MK2')
 
     # Boucler sur tous les casques
     for index, product in data.iterrows():

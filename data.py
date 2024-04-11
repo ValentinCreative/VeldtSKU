@@ -1,3 +1,7 @@
+import gspread as gs
+from credentials import credentials
+import pandas as pd
+
 database = "https://docs.google.com/spreadsheets/d/1EVUj6VfX5HioFMWWxpn8RseRiHhjBbxuYFtFkXOjPdw/edit#gid=0"
 # Liste des fichiers Excel
 sources = {
@@ -18,3 +22,23 @@ sources = {
     'mark2_sizes':
     'https://docs.google.com/spreadsheets/d/1H4WHis3M0r7gbQXRkhOrx1L2s_uNgYi42SsFOR-ZFvo/edit#gid=1621514264',
 }
+
+gc = gs.service_account_from_dict(credentials)
+
+
+def get_data(key=None):
+    data = {}
+
+    if key is not None:
+        print("Récupération de la feuille ", key)
+        sh = gc.open_by_url(database)
+        ws = sh.worksheet('MK1')
+        data = pd.DataFrame(ws.get_all_records())
+    else:
+        for key in sources:
+            print("Récupération du fichier ", key)
+            sh = gc.open_by_url(sources[key])
+            ws = sh.get_worksheet(0)
+            data[key] = pd.DataFrame(ws.get_all_records())
+
+    return data

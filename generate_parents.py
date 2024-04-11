@@ -1,24 +1,12 @@
 import pandas as pd
-import gspread as gs
-from credentials import credentials
-from data import database, sources
+from data import database, get_data, gc
 from utils import concat_sku, concat_description
-
-gc = gs.service_account_from_dict(credentials)
 
 
 def generate_parents():
 
     products = []
-
-    # Transforme chaque fichiers en donnée exploitable
-    data = {}
-
-    for key in sources:
-        print("Récupération du fichier ", key)
-        sh = gc.open_by_url(sources[key])
-        ws = sh.get_worksheet(0)
-        data[key] = pd.DataFrame(ws.get_all_records())
+    data = get_data()
 
     # Boucler sur tous les designs
     for design_index, design in data['designs'].iterrows():
