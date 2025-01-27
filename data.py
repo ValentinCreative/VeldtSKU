@@ -32,7 +32,7 @@ def get_data(key=None):
     if key is not None:
         print("Récupération de la feuille ", key)
         sh = gc.open_by_url(database)
-        ws = sh.worksheet('MK1')
+        ws = sh.worksheet(key)
         data = pd.DataFrame(ws.get_all_records())
     else:
         for key in sources:
